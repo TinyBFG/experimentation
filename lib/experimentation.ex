@@ -259,3 +259,59 @@ defmodule Tail_call_practice do
     end
 
 end
+
+defmodule Enum_practice do
+
+  def enum_reduce_practice_1 do
+    Enum.reduce([1, "not a number", 2, :x, 3],
+                  0,
+                  fn
+                    element, sum when is_number(element) ->
+                    sum + element
+
+                     _, sum -> sum
+                  end
+                )
+
+  end
+  #These are the same thing just one avoids a complex lambda
+  def sum_nums(enumerable) do
+    Enum.reduce(enumerable, 0, &add_num/2)
+  end
+
+    defp add_num(num, sum) when is_number(num), do: sum + num
+    defp add_num(_, sum), do: sum
+
+end
+
+defmodule Stream_practice do
+
+  def large_lines!(path) do
+    File.stream!(path)
+    |> Stream.map(&String.replace(&1, "\n", " "))
+    |> Enum.filter(&(String.length(&1) > 80))
+  end
+
+  def lines_length!(path) do
+    File.stream!(path)
+    |> Stream.map(&String.replace(&1, "\n", " "))
+    |> Enum.map(&String.length(&1))
+  end
+
+  def longest_line_length!(path) do
+  File.stream!(path)
+  |> Stream.map(&String.replace(&1, "\n", " "))
+  |> Stream.map(&String.length(&1))
+  |> Enum.sort(&(&1 >= &2))
+  |> List.first()
+  end
+
+  def longest_line!(path) do
+    x = longest_line_length!(path)
+    File.stream!(path)
+    |> Stream.map(&String.replace(&1, "\n", " "))
+    |> Stream.with_index()
+    |> Stream.map(fn {string, index} -> {_string, String.length(string)} end)
+    |> Enum.each()
+  end
+end
